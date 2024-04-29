@@ -1,0 +1,4 @@
+CREATE LOGIN root WITH PASSWORD = 'saPassword1234';
+ALTER SERVER ROLE sysadmin ADD MEMBER root;
+
+CREATE DATABASE db_sample;

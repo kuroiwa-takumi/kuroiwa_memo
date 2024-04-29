@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mssql:
+    image: custom-mssql # 更新されたイメージ名
+    container_name: mssql
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=saPassword1234
+      - MSSQL_LCID=1041
+      - MSSQL_COLLATION=Japanese_CI_AS
+    volumes:
+      - './docker/db/data:/var/opt/mssql/data'
+      - './docker/db/log:/var/opt/mssql/log'
+      - './docker/db/secrets:/var/opt/mssql/secrets'

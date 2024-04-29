@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  azuresqledge:
+    image: mcr.microsoft.com/azure-sql-edge
+    cap_add:
+      - SYS_PTRACE
+    environment:
+      ACCEPT_EULA: "1"
+      MSSQL_SA_PASSWORD: "saPass1234"
+    ports:
+      - "1433:1433"
+    container_name: azuresqledge
+    restart: unless-stopped
+    networks:
+      - sample-network
+
+networks:
+  sample-network:
+    driver: bridge
+    name: docker_sample-network
