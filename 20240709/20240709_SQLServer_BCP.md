@@ -1,5 +1,5 @@
 ## SQLServerのBCPコマンドを使ってみる
-- SQL Serverでbcpコマンドを使う機会があったのでメモ
+- SQL Serverのbcpコマンドを使う機会があったのでメモ
 
 ### 参考
 - [bcp ユーティリティ Microsoft公式](https://learn.microsoft.com/ja-jp/sql/tools/bcp-utility?view=sql-server-ver16&tabs=windows)
@@ -9,15 +9,14 @@
 ## 概要
 - bcpとは？
   - バルクコピー (`Bulk Copy Program`) は、SQL Server テーブルとファイル間でデータをコピーするためのコマンドラインユーティリティ
-  - bcp ユーティリティを使うと、多数の新規行を SQL Server テーブルにインポートしたり、データをテーブルからデータ ファイルにエクスポートしたりできる
+  - bcp ユーティリティを使うと、**多数の新規行を SQL Server テーブルにインポートしたり、データをテーブルからデータファイルにエクスポートしたりできる**
 - SQL Serverのあるテーブルから大量のデータをエクスポートしたり、インポートしたりする際に使うと便利！
 - bcopコマンドは、`SQL Serverのインストール時にインストールされる`ので、SQL Serverをインストールしていれば使える!
 
 ## 実際に使ってみよう
 - SQL Serverがインストールされている環境で実際に使ってみます！
-
-- SQL Serverがインストールされている環境でbcpユーティリティが使えることを確認
-    - `bcp`コマンドを実行して、ヘルプが表示されればOK
+  - SQL Serverがインストールされている環境でbcpユーティリティが使えることを確認
+  - `bcp`コマンドを実行して、ヘルプが表示されればOK
 ```shell
 bcp
 
@@ -42,6 +41,7 @@ Copyright (C) Microsoft Corporation. All Rights Reserved.
 バージョン: 11.0.2100.60
 ```
 
+### データをエクスポートする
 bcpコマンドで使用するテーブルを以下クエリで作成しておく
 ```sql
 DROP TABLE IF EXISTS TMemberTest;
@@ -79,11 +79,10 @@ GO
 SELECT * FROM TMemberTest;
 ```
 selectするとこんな感じのテーブル
-![img.png](img.png)
+![img.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/173505/741bd2c1-52fb-bb03-c7df-98dba41c5757.png)
 
-### データをエクスポートする
 - `bcp`コマンドを使って、テーブルのデータをエクスポートしてみます
-  - SQL Serverがインストールされている環境で実行 
+  - SQL Serverがインストールされている環境で実行
   - `bcp TableName out FileName -S ServerName -d Dbname -U Username -P Password -c`
 - オプション
   - `-out` : データをテーブルからファイルにエクスポート
@@ -103,26 +102,30 @@ bcp TMemberTest out C:\work\TMemberTest.txt -c -S DBServer -d sample -U  takumi.
 クロック タイム (ミリ秒) 合計     : 1      平均 : (100000.00 行/秒)
 ```
 - ファイル出力した内容は以下
+  ![img_1.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/173505/6a48f01a-8f1a-1ca8-1826-fef1777935b7.png)
 
-![img_1.png](img_1.png)
-
+#### queryoutオプション
 - `queryout`オプションを使うと、クエリ結果をファイルに出力できる
   - `bcp "SELECT MemberID, MemberSei, MemberMei, BirthDate, Email, JoinDate, LoginName FROM TMemberTest WHERE BirthDate > '1980-01-01'" queryout C:\work\TMemberTest_queryout.txt -c -S DBServer -d sample -U  takumi.kuroiwa`
 
 ```bash
-bcp TMemberTest out C:\work\TMemberTest.txt -c -S DBServer -d sample -U  takumi.kuroiwa
+bcp "SELECT MemberID, MemberSei, MemberMei　FROM TMemberTest WHERE BirthDate > '1980-01-01'" queryout C:\work\TMemberQueryoutTest.txt -c -S DBServer -d sample -U  takumi.kuroiwa
 パスワード:
+
 コピーを開始しています...
 
-94 行コピーされました。
+90 行コピーされました。
 ネットワーク パケット サイズ (バイト): 4096
-クロック タイム (ミリ秒) 合計     : 1      平均 : (94000.00 行/秒)
+クロック タイム (ミリ秒) 合計     : 1      平均 : (90000.00 行/秒)
 ```
+- ファイル出力した内容は以下
+  ![image.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/173505/1b537be5-ada6-a47c-4390-dfb9baa2f7d3.png)
 
 ### データをインポートする
 - `bcp`コマンドを使って、ファイルのデータをテーブルにインポートしてみます
   - SQL Serverがインストールされている環境で実行
   - `bcp TableName in FileName -S ServerName -d Dbname -U Username -P Password -c`
+
 - オプション
   - `-in` : データをファイルからテーブルにインポート
   - `-S` : サーバー名
@@ -148,7 +151,7 @@ CREATE TABLE TMemberTestImport
     LoginName NVARCHAR(50)
 );
 ```
-![img_2.png](img_2.png)
+![img_2.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/173505/f181fca3-7719-2e2d-57be-a2c0ff353757.png)
 
 - エクスポートで出力したファイルからデータをインポート
 ```bash
@@ -164,5 +167,14 @@ bcp TMemberTestImport in C:\work\TMemberTest.txt -c -S DBServer -d sample -U tak
 - インポートしたデータを確認
   - インポートしたデータは、エクスポートしたデータと同じ内容になっていることを確認
 
-```sql
-![img_3.png](img_3.png)
+![img_3.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/173505/b3d55ecf-d0b0-20dd-03af-086066a77253.png)
+
+
+### まとめ
+- BCPコマンドは、SQL Serverのデータを効率的にエクスポートおよびインポートできる！
+- データベースのバックアップやデータ移行などに使える
+  - テーブルのデータをファイルにエクスポートして、別の環境にインポートするなど
+- オプションも豊富で、様々な形式でデータをエクスポートおよびインポートできる！
+  - 今回はシンプルな使い方のみ試しましたが、他にも様々なオプションがあるので、必要に応じて使い分けられそう
+  - 次回以降でより詳細な使い方を試してみたい！
+- SQL Serverを使っている方は、ぜひ使ってみてください！
