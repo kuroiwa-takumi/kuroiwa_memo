@@ -2,7 +2,7 @@
 - 本記事は[SQL 第2版 ゼロからはじめるデータベース操作](https://www.shoeisha.co.jp/book/detail/9784798144450)で学んだ内容をまとめたものです。
   - 前回は「**第0章：イントロダクション**」「**第1章：データベースとSQL**」で学んだ内容をまとめました：[SQL 第2版 ゼロからはじめるデータベース操作 アウトプット（第1回）](https://qiita.com/takumi_links/items/42f54fed377cbc266333)
   - 今回は「**第2章：検索の基本**」についてまとめていきます
-
+  - 第2章が意外とボリュームがあったので、複数回に分けてまとめていきます
 
 ## SELECT
 ### SELECT文とは
@@ -103,11 +103,118 @@ mysql> SELECT DISTINCT shiire_tanka FROM Shohin;
 ```
 
 ### WHERE句
+- SELECT文では、選択したい行の条件を**WHERE句**で指定できる
+  - WHERE句はSELECT文のFROM句の後に指定する
+  - 「ある列の値がこの文字列と等しい」「ある列の値がこの数値より大きい」などの条件を指定できる
+  - 条件式：検索条件を指定する式
+
+### 1行コメントと複数行コメント
+- 1行コメント：`--`を使う
+- 複数行コメント：`/* */`を使う
+
+```sql
+mysql> SELECT shohin_mei, shohin_bunrui FROM Shohin WHERE shohin_bunrui = 'Clothing';
++-------------+---------------+
+| shohin_mei  | shohin_bunrui |
++-------------+---------------+
+| T-shirt     | Clothing      |
+| Dress Shirt | Clothing      |
++-------------+---------------+
+2 rows in set (0.00 sec)
+```
+
+## 算術演算子
+### 演算子とは
+- 演算子の両辺にある値を使って四則演算や文字列の結合、数値の大小比較などの演算を行う
+
+### 算術演算子
+- 四則演算を行う記号：`+`, `-`, `*`, `/`は算術演算子と呼ばれる
+
+```sql
+-- 各商品について2つ分の価格
+mysql> SELECT shohin_mei, hanbai_tanka, hanbai_tanka * 2 AS 'hanbai_tanka * 2' FROM Shohin;
++-----------------+--------------+------------------+
+| shohin_mei      | hanbai_tanka | hanbai_tanka * 2 |
++-----------------+--------------+------------------+
+| T-shirt         |         1000 |             2000 |
+| Hole Punch      |          500 |             1000 |
+| Dress Shirt     |         4000 |             8000 |
+| Kitchen Knife   |         3000 |             6000 |
+| Pressure Cooker |         6800 |            13600 |
+| Fork            |          500 |             1000 |
+| Grater          |          880 |             1760 |
+| Ballpoint Pen   |          100 |              200 |
++-----------------+--------------+------------------+
+8 rows in set (0.00 sec)
+```
+
+### NULLの計算に注意
+- NULLを含んだ計算は、問答無用でNULLになる
+  - NULLは「未定義」「不明」という意味
+  - NULLが含まれると、計算結果もNULLになる
+```sql
+mysql> select 5 + NULL
+    -> ;
++----------+
+| 5 + NULL |
++----------+
+|     NULL |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select 5 + NULL;
++----------+
+| 5 + NULL |
++----------+
+|     NULL |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select 10 - NULL;
++-----------+
+| 10 - NULL |
++-----------+
+|      NULL |
++-----------+
+1 row in set (0.00 sec)
+
+mysql> select 1 * NULL;
++----------+
+| 1 * NULL |
++----------+
+|     NULL |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select 4 / NULL;
++----------+
+| 4 / NULL |
++----------+
+|     NULL |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select NULL / 9;
++----------+
+| NULL / 9 |
++----------+
+|     NULL |
++----------+
+1 row in set (0.00 sec)
+
+mysql> select NULL / 0;
++----------+
+| NULL / 0 |
++----------+
+|     NULL |
++----------+
+1 row in set (0.00 sec)
+```
 
 
 ### まとめ
-- 本記事では「**第0章：イントロダクション**」「**第1章：データベースとSQL**」で学んだ内容をまとめました
-- 次回以降は「**第2章：データの検索**」についてまとめていきます
+- 本記事では「**第2章：検索の基本**」2-1:SELECT文の基本, 2-2: 算術演算子と比較演算子の途中（比較演算子はまだ）までまとめました
+- 次回以降は「**第2章：検索の基本**」2-2: 算術演算子と比較演算, 2-3: 論理演算子 についてまとめていきます
 
 ## 参考
 - [SQL 第2版 ゼロからはじめるデーエベース操作](https://www.shoeisha.co.jp/book/detail/9784798144450)
