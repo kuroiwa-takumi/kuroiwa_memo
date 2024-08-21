@@ -8,10 +8,9 @@ services:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: sample_db
     ports:
-      - "3306:3306"
+      - "3307:3307"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./init_mysql.sql:/docker-entrypoint-initdb.d/init_mysql.sql
 
   postgres:
     image: postgres:latest
